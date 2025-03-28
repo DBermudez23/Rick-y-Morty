@@ -12,7 +12,7 @@ function Header() {
         />
       </a>
 
-      {/* Navegación */}
+      {/* Navigation */}
       <nav>
         <ul className="flex flex-row space-x-6 md:space-x-10 text-lg font-semibold gap-8">
           <li>
@@ -20,7 +20,7 @@ function Header() {
               href="#"
               className="text-white hover:text-green-300 transition-colors duration-200"
             >
-              Episodios
+              Episodes
             </a>
           </li>
           <li>
@@ -28,7 +28,7 @@ function Header() {
               href="#"
               className="text-white hover:text-green-300 transition-colors duration-200"
             >
-              Lugares
+              Locations
             </a>
           </li>
           <li>
@@ -36,7 +36,7 @@ function Header() {
               href="#"
               className="text-white hover:text-green-300 transition-colors duration-200"
             >
-              Personajes
+              Characters
             </a>
           </li>
         </ul>
