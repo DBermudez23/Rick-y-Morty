@@ -1,41 +1,49 @@
 import { useEffect, useState } from "react";
 
-function useFetchCharacters ({endpoint}){
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+// Custom hook to consume the Rick and Morty API
+const useRickAndMortyApi = (endpoint) => {
+  const [data, setData] = useState([]); // State to store the data
+  const [loading, setLoading] = useState(true); // State for login management
+  const [error, setError] = useState(null); // State to handling errors
 
-    useEffect(() => {
-        const fetchCharacters = async () => {
-        try {
-            setLoading(true);
-            setError(null);
+  const fetchAllData = async (url, accumulatedData = []) => {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
 
-            let allResults = [];
-            let url = `https://rickandmortyapi.com/api/${endpoint}`
+      // Acumulate of responses in a single array
+      const newData = [...accumulatedData, ...result.results];
 
-            while(url){ //Mientras existan más URL para siguientes páginas
-                const response = await fetch(url);
-                if (!response.ok){
-                    throw new Error("Error getting data")
-                }
-                const result = await response.json();
-                allResults = [...allResults, ...result.results];
-                url = result.info.next; //Actualiza URL para la siguiente página o null en caso que no haya más
-            }
-            setData(result.results);
-        } catch (err) {
-            setError(err.message);
-        }
-        finally {
-            setLoading(false);
-        }
-        };
+      // If there is one next page, we call the function recursively
+      if (result.info.next) {
+        await fetchAllData(result.info.next, newData);
+      } else {
+        // if there isn´t more pages, we update the states
+        setData(newData);
+        setLoading(false);
+      }
+    } catch (err) {
+      setError(err.message || 'Error fetching data');
+      setLoading(false);
+    }
+  };
 
-        fetchCharacters();
-    }, [endpoint])
+  // useEffect for fetch when endpoint changes
+  useEffect(() => {
+    if (endpoint) {
+      setLoading(true);
+      setError(null);
+      setData([]); // Clear recently data
+      const baseUrl = 'https://rickandmortyapi.com/api';
+      const fullUrl = `${baseUrl}/${endpoint}`;
+      fetchAllData(fullUrl);
+    }
+  }, [endpoint]); // The fetch will be executed when the endpoint changes   
 
-    return { data, loading, error };
-}
+  return { data, loading, error };
+};
 
-export default useFetchCharacters;
+export default useRickAndMortyApi;

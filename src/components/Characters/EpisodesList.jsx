@@ -3,7 +3,7 @@ import CardEpisode from "./CardEpisode";
 import { useState } from "react";
 
 function EpisodesList() {
-    const { data, error, loading } = useFetchCharacters({ endpoint: "episode" });
+    const { data, error, loading } = useFetchCharacters("episode" );
     console.log(data);
 
 
